@@ -4,9 +4,9 @@ import json
 import pandas as pd
 import dicts
 from datetime import date
-from symbol_input import collect_symbols
+from collect_input import collect_input
 from data_collection import collect_data
-from code_input import collect_codes
+import validation_methods as vms
 
 # creates path strings for config data
 with open('config/config.json') as config_file:
@@ -18,14 +18,15 @@ with open('config/config.json') as config_file:
 subprocess.run("del *.png", shell=True)
 
 # runs the collection of symbols and their associated data
-symbols = collect_symbols()
+symbols = collect_input(vms.vsymbol, len_compare=True)
 income_statements = collect_data(symbols, '')
 balance_sheets = collect_data(symbols, 'balance-sheet')
 cash_flows = collect_data(symbols, 'cash-flow')
 
-code_tuple = collect_codes()
-stringified_codes = code_tuple[0]
-codes = code_tuple[1]
+codes = collect_input(vms.vcode)
+stringified_codes = list()
+for c in codes:
+    stringified_codes.append(dicts.indexes[c])
 
 # gets the current year, for consistency with differing fiscal years
 year = date.today().year
