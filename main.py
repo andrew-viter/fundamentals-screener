@@ -8,9 +8,16 @@ from symbol_input import collect_symbols
 from data_collection import collect_data
 from code_input import collect_codes
 
+# creates path strings for config data
+with open('config/config.json') as config_file:
+    config_data = json.load(config_file)
+    rscript_path = config_data["r_script_executable_path"]
+    r_files_directory = config_data["r_files_directory"]
+
 # deletes any old png files from the directory to prepare for new ones
 subprocess.run("del *.png", shell=True)
 
+# runs the collection of symbols and their associated data
 symbols = collect_symbols()
 income_statements = collect_data(symbols, '')
 balance_sheets = collect_data(symbols, 'balance-sheet')
@@ -78,9 +85,11 @@ for j in range(len(codes)):
     with open('data.json', 'w') as outfile:
         json.dump(datafr_specifics, outfile)
 
-    print("Executing line_plot_visualization.R with code " + code)
+    print("Executing line_plot.R with code " + code)
 
     #runs the r script that produces a graph
-    subprocess.run("C:/Program Files/R/R-4.0.4/bin/Rscript.exe --vanilla \"C:/Users/andre/OneDrive/Documents/R Files/line_plot_visualization.R\"", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    args = "--vanilla"
+    rfile_path = "\"{}/line_plot.R\"".format(r_files_directory)
+    subprocess.run(' '.join([rscript_path, args, rfile_path]), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 print("Done")
