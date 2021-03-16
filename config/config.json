@@ -1,0 +1,6 @@
+{
+    "program_directory_path": "path/to/program_directory/",
+    "r_script_executable_path": "path/to/rscript.exe",
+    "r_files_directory": "path/to/rfiles",
+    "png_file_output_path": "path/to/pngfiles_directory"
+}

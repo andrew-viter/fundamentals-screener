@@ -1,1 +1,5 @@
-{"code": "102", "main title": "Operating Margin by Year", "axis title": "Operating Margin, %"}
+{
+    "code": "000", 
+    "main title": "Main Graph Title", 
+    "axis title": "Metric and Unit"
+}
