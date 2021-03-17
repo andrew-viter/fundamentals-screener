@@ -6,13 +6,13 @@ import chart_generation as cg
 from datetime import date
 
 # creates path strings for config data
-with open('config/config.json') as config_file:
+with open('../config/config.json') as config_file:
     config_data = json.load(config_file)
     rscript_path = config_data["r_script_executable_path"]
     r_files_directory = config_data["r_files_directory"]
 
 # deletes any old png files from the directory to prepare for new ones
-subprocess.run("del *.png", shell=True)
+# subprocess.run("del ../*.png", shell=True)
 
 # runs the collection of symbols and their associated data
 symbols = cg.collect_input(cg.vms.vsymbol, len_compare=True)
@@ -20,10 +20,10 @@ income_statements = cg.collect_data(symbols, '')
 balance_sheets = cg.collect_data(symbols, 'balance-sheet')
 cash_flows = cg.collect_data(symbols, 'cash-flow')
 
-codes = collect_input(vms.vcode)
+codes = cg.collect_input(cg.vms.vcode)
 stringified_codes = list()
 for c in codes:
-    stringified_codes.append(dicts.indexes[c])
+    stringified_codes.append(cg.dicts.indexes[c])
 
 # gets the current year, for consistency with differing fiscal years
 year = date.today().year
@@ -43,13 +43,13 @@ for j in range(len(codes)):
     cols_add = list()
 
     if code[0] == '1':
-        cols_add = one_hundred.process_100(income_statements, code, index)
+        cols_add = cg.hundred.one(income_statements, code, index)
 
     elif code[0] == '2':
-        cols_add = two_hundred.process_200(balance_sheets, code, index)
+        cols_add = cg.hundred.two(balance_sheets, code, index)
     
     elif code[0] == '3':
-        cols_add = three_hundred.process_300(cash_flows, code, index)
+        cols_add = cg.hundred.three(cash_flows, code, index)
 
     # adds a column for each symbol, using the correct column data
     for symbol in symbols:
@@ -64,12 +64,12 @@ for j in range(len(codes)):
     # dictionary to be converted to json
     datafr_specifics = {
         "code": code,
-        "main title": dicts.main_titles[code],
-        "axis title": dicts.axis_titles[code]
+        "main title": cg.dicts.main_titles[code],
+        "axis title": cg.dicts.axis_titles[code]
     }
 
     # dumps names specific to code iteration into a file
-    with open('data/data.json', 'w') as outfile:
+    with open('../data/data.json', 'w') as outfile:
         json.dump(datafr_specifics, outfile)
 
     print("Executing line_plot.R with code " + code)
