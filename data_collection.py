@@ -15,13 +15,17 @@ def collect_data(symbols, statement):
         
         # gets table, sets dataframe to proper table
         try:
-            table = pd.read_html(url,match='Item')
+            tables = pd.read_html(url,match='Item')
             print("Scraping " + url)
-            financials = table[0]
         except ValueError:
             print("Unable to access data at " + url)
             symbols_to_remove.append(symbol)
             continue
+        finally:
+            if statement == '':
+                financials = tables[0]
+            else:
+                financials = pd.concat(tables)
 
         financials = financials.drop(columns=['5-year trend'])
         financials = financials.rename(columns={'Item  Item':'Item'})

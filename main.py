@@ -7,6 +7,9 @@ from datetime import date
 from collect_input import collect_input
 from data_collection import collect_data
 import validation_methods as vms
+import one_hundred
+import two_hundred
+import three_hundred
 
 # creates path strings for config data
 with open('config/config.json') as config_file:
@@ -38,32 +41,21 @@ for l in range(5):
 
 # loops over each code in the list
 for j in range(len(codes)):
-    df_index = stringified_codes[j]
     code = codes[j]
+    index = stringified_codes[j]
 
     # makes the dataframe for storing data from code operation
     datafr = pd.DataFrame(index=last_5_cal_years, columns=symbols)
     cols_add = list()
 
     if code[0] == '1':
-        # loops over the company first
-        # this is necessary in the event that they have no data for one or more years
-        # it allows for the insertion of 0 to the start of data
-        for company in income_statements:
-            col_add = list()
+        cols_add = one_hundred.process_100(income_statements, code, index)
 
-            # loops over last 5 years of data, or as many as available
-            for k in range(5):
-                # will try to add the data for a year
-                try:
-                    data = 100 * round((company.loc[df_index][k] / company.loc['Sales/Revenue'][k]), 4)
-                    col_add.append(data)
-                except IndexError:
-                    # if index error (no data), add 0 to the front of list
-                    col_add.insert(0, 0.0)
-            
-            # adds the data from company to data from all companies
-            cols_add.append(col_add)
+    elif code[0] == '2':
+        cols_add = two_hundred.process_200(balance_sheets, code, index)
+    
+    elif code[0] == '3':
+        cols_add = three_hundred.process_300(cash_flows, code, index)
 
     # adds a column for each symbol, using the correct column data
     for symbol in symbols:
