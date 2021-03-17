@@ -1,5 +1,5 @@
 import pandas as pd
-from dicts import mult_value
+from chart_generation.dicts import mult_value
 
 def collect_data(symbols, statement):
     # this is a list of bad symbols that need to be tossed
