@@ -65,7 +65,7 @@ for j in range(len(codes)):
     # dfs.append(datafr)
 
     # converts the dataframe into a csv file
-    datafr.to_csv(path_or_buf="C:/Users/andre/PythonProjects/fundamentals_screener/data.csv", index_label="year")
+    datafr.to_csv(path_or_buf="C:/Users/andre/PythonProjects/fundamentals_screener/data/data.csv", index_label="year")
 
     # dictionary to be converted to json
     datafr_specifics = {
@@ -75,7 +75,7 @@ for j in range(len(codes)):
     }
 
     # dumps names specific to code iteration into a file
-    with open('data.json', 'w') as outfile:
+    with open('data/data.json', 'w') as outfile:
         json.dump(datafr_specifics, outfile)
 
     print("Executing line_plot.R with code " + code)
@@ -83,6 +83,7 @@ for j in range(len(codes)):
     #runs the r script that produces a graph
     args = "--vanilla"
     rfile_path = "\"{}/line_plot.R\"".format(r_files_directory)
-    subprocess.run(' '.join([rscript_path, args, rfile_path]), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    hidden = subprocess.DEVNULL
+    subprocess.run(' '.join([rscript_path, args, rfile_path]), stdout=hidden, stderr=hidden)
 
 print("Done")
