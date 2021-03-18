@@ -7,9 +7,9 @@ args = input_list[1:]
 
 while command != "done":
     if command == "generate":
-        functions.chart_generation()
+        functions.generate_chart()
 
-    elif command == "clean":
+    elif command == "cleanup":
         functions.image_cleanup()
     
     elif command == "archive":
