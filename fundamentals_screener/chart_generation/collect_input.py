@@ -1,9 +1,9 @@
-def collect_input(validation_method, len_compare=False):
+def collect_input(validation_method, msg, len_compare=False):
     # collector list declaration; stores input
     collector = list()
 
     # initial command prompt and input parsing
-    print("Enter a command, or \'help\' to see commands")
+    print(msg)
     input_list = input(">>> ").split(' ')
     command = input_list[0]
     arg_present = (True if len(input_list) > 1 else False)
