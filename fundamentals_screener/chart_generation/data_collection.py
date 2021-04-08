@@ -1,5 +1,5 @@
 import pandas as pd
-from chart_generation.web_data_cleaner import drop_useless_columns, drop_useless_indexes, clean_table_data
+from chart_generation.clean_web_data import drop_useless_columns, drop_useless_indexes, clean_table_data
 from chart_generation.source_web_data import source_data
 
 def collect_data(symbols, statement):
