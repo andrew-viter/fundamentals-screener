@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 def drop_useless_indexes(df, indexes):
     # indexes_to_delete keeps only one copy of each index
     indexes_to_delete = []
@@ -27,3 +29,35 @@ def drop_useless_columns(df):
     df.drop(columns=['Item'], inplace=True)
     
     return df
+
+def clean_table_data(val):
+    # no data, set it to 0
+    if val == '-':
+        return 0
+    
+    # remove parentheses if present and set negative
+    if '(' or ')' in val:
+        val = val.replace('(', '-')
+        val = val.replace(')', '')
+
+    # gets rid of any commas, which interfere with decimal conversion
+    if ',' in val:
+        val = val.replace(',', '')
+
+    suffix = val[-1]
+
+    # processes suffix
+    if suffix == '%' or suffix.isdigit():
+        val = val.replace('%', '')
+        return Decimal(val)
+
+    else:
+        val = val.replace(suffix, '')
+        # raw data comes with k, m, or b
+        multiplier = {
+                        'K': 1000,
+                        'M': 1000000,
+                        'B': 1000000000
+                     }[suffix]
+        return Decimal(val) * multiplier
+
