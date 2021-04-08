@@ -1,9 +1,3 @@
-mult_value = {
-    'K': 1000,
-    'M': 1000000,
-    'B': 1000000000
-}
-
 indexes = {
     '100': 'Gross Income',
     '101': 'Net Income',

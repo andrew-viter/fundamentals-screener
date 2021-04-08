@@ -4,6 +4,7 @@ import pandas as pd
 import chart_generation as cg
 import file_system_ops as fso
 from datetime import date
+from chart_generation.validate_symbols import validate_symbols
 
 def generate_chart():
     # creates path strings for config data
@@ -17,6 +18,10 @@ def generate_chart():
 
     # runs the collection of symbols and their associated data
     symbols = cg.collect_input(cg.vms.vsymbol, "Symbol entry mode", len_compare=True)
+    invalid_symbols = validate_symbols(symbols)
+    for i in invalid_symbols:
+        symbols.remove(i)
+    
     income_statements = cg.collect_data(symbols, '')
     balance_sheets = cg.collect_data(symbols, 'balance-sheet')
     cash_flows = cg.collect_data(symbols, 'cash-flow')
