@@ -1,7 +1,5 @@
 import functions
 
-
-
 print("Enter a command, or \'help\' to see commands")
 command = str()
 commands = ['done', 'gen', 'cleanup', 'archive']

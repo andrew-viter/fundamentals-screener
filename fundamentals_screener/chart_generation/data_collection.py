@@ -1,4 +1,5 @@
 import pandas as pd
+from decimal import Decimal
 from chart_generation.dicts import mult_value
 
 def collect_data(symbols, statement):
@@ -22,28 +23,24 @@ def collect_data(symbols, statement):
             symbols_to_remove.append(symbol)
             continue
         finally:
-            if statement == '':
+            if len(tables) == 1:
                 financials = tables[0]
             else:
                 financials = pd.concat(tables)
 
-        financials = financials.drop(columns=['5-year trend'])
-        financials = financials.rename(columns={'Item  Item':'Item'})
-        indexes = list()
+        if statement == '':
+            indexes_to_keep = ['Gross Income', 'Net Income', 'Cost of Goods Sold (COGS) incl. D&A', 'EPS (Basic)', 'Sales/Revenue']
+        elif statement == 'balance-sheet':
+            indexes_to_keep = ['Total Liabilities', 'Long-Term Debt', 'ST Debt & Current Portion LT Debt', 'Total Current Assets', 'Total Equity', 'Total Current Liabilities']
+        elif statement == 'cash-flow':
+            indexes_to_keep = ['Net Operating Cash Flow', 'Capital Expenditures']
 
-        # iterates through each row, gets name, stores altered copy of name
-        for index, row in financials.iterrows():
-            old_name = row['Item']
-            new_length = int((len(old_name) / 2) - 1)
-            index_name = old_name[0:new_length]
-            indexes.append(index_name)
-
-        financials.index = indexes
-        financials = financials.drop(columns=['Item'])
+        financials = drop_unneeded_columns(financials)
+        financials = drop_unneeded_indexes(financials, indexes_to_keep)
         final_data = list()
 
         # cleans up the string data and converts it into numeric form
-        for index, raw_data_list in financials.iterrows():
+        for _, raw_data_list in financials.iterrows():
 
             # temporary list for storing the row's cleaned values
             cleaned_data = list()
@@ -61,25 +58,25 @@ def collect_data(symbols, statement):
                     data = data.replace(')', '')
 
                 # gets rid of any commas, which can interfere with float conversion
-                elif ',' in data:
+                if ',' in data:
                     data = data.replace(',', '')
 
-                suffix = data[len(data) - 1]
+                suffix = data[-1]
 
                 # processes suffix and applies appropriate precision
                 if suffix == '%':
                     data = data.replace('%', '')
-                    cleaned_data.append(round(float(data), 2))
+                    cleaned_data.append(Decimal(data))
                     continue
                 elif suffix.isdigit():
-                    cleaned_data.append(round(float(data), 2))
+                    cleaned_data.append(Decimal(data))
                     continue
                 elif not suffix.isdigit():
                     mult = suffix
                     data = data.replace(mult, '')
                     multiplier = mult_value[mult]
-                    numeric_data = float(data)
-                    cleaned_data.append(round(numeric_data * multiplier))
+                    numeric_data = Decimal(data)
+                    cleaned_data.append(numeric_data * multiplier)
 
             # adds list of cleaned values to list of all values
             final_data.append(cleaned_data)
@@ -96,3 +93,37 @@ def collect_data(symbols, statement):
         symbols.remove(s)
 
     return cleaned_data_frames
+
+
+def drop_unneeded_indexes(df, indexes):
+    # temp stores all the indexes, regardless of if they are duplicate or not
+    # indexes_to_delete has only one copy of each index
+    temp = []
+    indexes_to_delete = list()
+
+    for i in df.index:
+        if not i in indexes:
+            temp.append(i)
+
+    # uses list comprehension to only add once
+    [indexes_to_delete.append(i) for i in temp if i not in temp]
+    df.drop(index=indexes_to_delete)
+
+    return df
+
+def drop_unneeded_columns(df):
+    df.drop(columns=['5-year trend'], inplace=True)
+    df.rename(columns={'Item  Item':'Item'}, inplace=True)
+
+    indexes = list()
+    # iterates through each row, gets name, stores altered copy of name
+    for _, row in df.iterrows():
+        old_name = row['Item']
+        new_length = (len(old_name) // 2 - 1)
+        new_name = old_name[:new_length]
+        indexes.append(new_name)   
+
+    df.index = indexes
+    df.drop(columns=['Item'], inplace=True)
+    
+    return df
