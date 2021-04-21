@@ -1,8 +1,6 @@
 def collect_input(validation_method, msg, len_compare=False):
-    # collector list declaration; stores input
     collector = list()
 
-    # initial command prompt and input parsing
     print(msg)
     input_list = input(">>> ").split(' ')
     command = input_list[0]
@@ -10,7 +8,6 @@ def collect_input(validation_method, msg, len_compare=False):
 
     while command != "done":
         if command == "add":
-            # there is an argument for command
             if arg_present:
                 arg = input_list[1].upper()
                 if (validation_method(arg, col=collector) if len_compare else validation_method(arg)):
@@ -21,7 +18,6 @@ def collect_input(validation_method, msg, len_compare=False):
                 print("No argument given for command \'add\'")
 
         elif command == "remove":
-            # argument present
             if arg_present:
                 arg = input_list[1].upper()
                 if arg in collector:

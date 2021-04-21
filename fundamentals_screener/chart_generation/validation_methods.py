@@ -1,5 +1,3 @@
-# validation methods for different data collected through collect_input
-
 def vsymbol(arg, col=list()):
     if arg.isalpha() and not arg in col and len(col) < 5:
         return True

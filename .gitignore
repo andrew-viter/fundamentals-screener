@@ -1,0 +1,10 @@
+# directories
+__pycache__/
+.vscode/
+data/
+
+# files
+config.json
+*.png
+*.txt
+test.py

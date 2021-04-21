@@ -1,6 +1,5 @@
 from pandas import read_html
 
-# returns array of invalid symbols, to be removed by caller
 def validate_symbols(syms):
     invalid_symbols = []
 

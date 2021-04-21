@@ -1,12 +1,12 @@
 import pandas as pd
-from chart_generation.clean_web_data import drop_useless_columns, drop_useless_indexes, clean_table_data
-from chart_generation.source_web_data import source_data
+import chart_generation.web_data.clean as clean
+import chart_generation.web_data.source as source
 
 def collect_data(symbols, statement):
     cleaned_data_frames = list()
 
     for symbol in symbols:
-        financials = source_data(symbol, statement)
+        financials = source.source_data(symbol, statement)
 
         if statement == '':
             indexes_to_keep = ['Gross Income', 'Net Income', 'Cost of Goods Sold (COGS) incl. D&A', 'EPS (Basic)', 'Sales/Revenue']
@@ -15,8 +15,8 @@ def collect_data(symbols, statement):
         elif statement == 'cash-flow':
             indexes_to_keep = ['Net Operating Cash Flow', 'Capital Expenditures']
 
-        financials = drop_useless_columns(financials)
-        financials = drop_useless_indexes(financials, indexes_to_keep)
+        financials = clean.drop_useless_columns(financials)
+        financials = clean.drop_useless_indexes(financials, indexes_to_keep)
         final_data = list()
 
         # cleans up the string data and converts it into numeric form
@@ -25,7 +25,7 @@ def collect_data(symbols, statement):
             cleaned_data = list()
 
             for data in raw_data_list:
-                clean_data = clean_table_data(data)
+                clean_data = clean.clean_table_data(data)
                 cleaned_data.append(clean_data)
 
             # adds list of cleaned values to list of all values
