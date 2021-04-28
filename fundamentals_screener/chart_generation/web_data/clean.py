@@ -1,16 +1,5 @@
 from decimal import Decimal
 
-def drop_useless_indexes(df, indexes):
-    indexes_to_delete = []
-
-    for i in df.index:
-        if not i in indexes or indexes_to_delete:
-            indexes_to_delete.append(i)
-
-    df.drop(index=indexes_to_delete)
-
-    return df
-
 def drop_useless_columns(df):
     df.drop(columns=['5-year trend'], inplace=True)
     df.rename(columns={'Item  Item':'Item'}, inplace=True)
