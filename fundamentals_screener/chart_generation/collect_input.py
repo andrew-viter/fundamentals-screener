@@ -1,7 +1,6 @@
-def collect_input(validation_method, msg, len_compare=False):
+def collect_input():
     collector = list()
 
-    print(msg)
     input_list = input(">>> ").split(' ')
     command = input_list[0]
     arg_present = (True if len(input_list) > 1 else False)
@@ -10,7 +9,7 @@ def collect_input(validation_method, msg, len_compare=False):
         if command == "add":
             if arg_present:
                 arg = input_list[1].upper()
-                if (validation_method(arg, col=collector) if len_compare else validation_method(arg)):
+                if arg.isalpha() and arg not in collector and len(collector) < 5:
                     collector.append(arg)
                 else:
                     print(' '.join(["Unable to add", arg, "to collector list"]))
@@ -32,14 +31,10 @@ def collect_input(validation_method, msg, len_compare=False):
             for i in collector:
                 print(i)
 
-        elif command == "valid":
-            print("For a detailed description of valid arguments in each section, see \'valid_input.txt\'")
-        
         elif command == "help":
             print("\'add\' - adds item to collector list")
             print("\'remove\' - removes item from collector list, if present")
             print("\'list\' - displays current state of collector list")
-            print("\'valid\' - displays information on where to find acceptable args")
             print("\'help\' - displays list of commands")
 
         else:

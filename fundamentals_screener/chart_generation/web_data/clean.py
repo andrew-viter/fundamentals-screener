@@ -1,4 +1,5 @@
 from decimal import Decimal
+import pandas as pd
 
 def drop_useless_columns(df):
     df.drop(columns=['5-year trend'], inplace=True)
@@ -16,28 +17,37 @@ def drop_useless_columns(df):
     
     return df
 
-def clean_table_data(val):
-    if val == '-':
-        return 0
-    
-    if '(' or ')' in val:
-        val = val.replace('(', '-')
-        val = val.replace(')', '')
+def clean_table_data(df):
+    final_data = []
+    for _, data_list in df.iterrows():
+        clean_data_list = []
+        for data in data_list:
+            if data == '-':
+                data = 0
+            
+            if '(' or ')' in str(data):
+                # str(data) IS necessary, otherwise it breaks
+                data = str(data).replace('(', '-')
+                data = data.replace(')', '')
 
-    if ',' in val:
-        val = val.replace(',', '')
+            if ',' in data:
+                data = data.replace(',', '')
 
-    suffix = val[-1]
+            suffix = data[-1]
 
-    if suffix == '%' or suffix.isdigit():
-        val = val.replace('%', '')
-        return Decimal(val)
+            if suffix == '%' or suffix.isdigit():
+                data = data.replace('%', '')
+                data = Decimal(data)
 
-    else:
-        val = val.replace(suffix, '')
-        multiplier = {
-                        'K': 1000,
-                        'M': 1000000,
-                        'B': 1000000000
-                     }[suffix]
-        return Decimal(val) * multiplier
+            else:
+                data = data.replace(suffix, '')
+                multiplier = {
+                                'K': 1000,
+                                'M': 1000000,
+                                'B': 1000000000
+                            }[suffix]
+                data = (Decimal(data) * multiplier)
+            
+            clean_data_list.append(data)
+        final_data.append(clean_data_list)
+    return pd.DataFrame(final_data, index=df.index, columns=df.columns)
