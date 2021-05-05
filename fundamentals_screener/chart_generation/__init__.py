@@ -1,1 +1,0 @@
-from chart_generation.collect_input import collect_input
